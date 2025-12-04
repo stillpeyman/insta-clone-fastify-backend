@@ -21,4 +21,8 @@ const postsSchema = z.array(postSchema)
 type CreatePostDto = z.infer<typeof createPostDtoSchema>
 type Post = z.infer<typeof postSchema>
 
+// createPostDtoSchema, postSchema, postsSchema exported because used at runtime to:
+// -> validate request bodies
+// -> validate DB rows
+// -> alidate external API responses
 export { createPostDtoSchema, postSchema, postsSchema, CreatePostDto, Post }

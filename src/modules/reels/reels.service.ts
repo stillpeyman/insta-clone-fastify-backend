@@ -8,6 +8,7 @@ const reelsService = (fastify: FastifyInstance) => {
             // This will use the MOCK `transactions` in our test,
             // and the REAL `transactions` in our live application.
             const reel = fastify.transactions.reels.create(reelData)
+            return reel
         },
         getAll: async () => {
             fastify.log.info(`Getting all reels`)

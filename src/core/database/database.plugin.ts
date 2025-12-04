@@ -6,10 +6,12 @@ import {
     type TransactionHelpers,
 } from "./database.transactions"
 
+// declare module = TS keyword => Extend "fastify" module types
 declare module "fastify" {
     interface FastifyInstance {
-        db: Database.Database
-        transactions: TransactionHelpers
+        // interface = TS type definition for FastifyInstance obj
+        db: Database.Database // Property "db" has type Database.Database
+        transactions: TransactionHelpers // Property "transactions" has type TransactionHelpers
     }
 }
 
@@ -26,9 +28,21 @@ async function databasePluginHelper(fastify: FastifyInstance) {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `)
+    // Create a simple table for testing if it doesn't exist
+    db.exec(`
+  CREATE TABLE IF NOT EXISTS reels (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    video_url TEXT NOT NULL,
+    thumbnail_url TEXT NOT NULL,
+    caption TEXT,
+    views INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`)
 
     const transactions = createTransactionHelpers(db)
 
+    // .decorate(name, value) attaches custom properties (db, transactions) and their values to fastify
     fastify.decorate("db", db)
     fastify.decorate("transactions", transactions)
 

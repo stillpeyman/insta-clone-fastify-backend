@@ -11,7 +11,7 @@ const createTransactionHelpers = (db: Database) => {
         // db.prepare(...) from better-sqlite3 lib: pre-compiles SQL query to run faster and prevent SQL injection
         // ? syntax: A placeholder -> fill it in later with a value
         // POSTS statements
-        getPostById: db.prepare("SELECT * FROM posts WHERE id = ?"),
+        getPostById: db.prepare("SELECT * FROM posts WHERE id = ?"), // get all columns of the one row where id matches
         getAllPosts: db.prepare("SELECT * FROM posts"),
         createPost: db.prepare(
             // RETURNING *: standard SQL -> After inserting the row, return entire (-> "*") row just created
@@ -24,6 +24,12 @@ const createTransactionHelpers = (db: Database) => {
             // RETURNING *: standard SQL -> After inserting the row, return entire (-> "*") row just created
             "INSERT INTO reels (video_url, caption) VALUES (@video_url, @caption) RETURNING *"
         ),
+        // TAGGED POSTS statements
+        getAllTaggedPosts: db.prepare("SELECT * FROM tagged_posts"),
+
+        // HIGHLIGHTS statements
+        getHighlightById: db.prepare("SELECT * FROM highlights WHERE id = ?"),
+        getAllHighlights: db.prepare("SELECT * FROM highlights"),
     }
 
     const posts = {
@@ -54,6 +60,21 @@ const createTransactionHelpers = (db: Database) => {
         },
     }
 
+    const tagged_posts = {
+        getAll: () => {
+            return statements.getAllTaggedPosts.all()
+        },
+    }
+
+    const highlights = {
+        getById: (id: number) => {
+            return statements.getHighlightById.get(id)
+        },
+        getAll: () => {
+            return statements.getAllHighlights.all()
+        },
+    }
+
     // => following here "Compile Once, Run Many" rule for performance and cleanliness
     // performance: compile SQL once when server starts (statements), and just run pre-compiled plan (posts)
     // cleanliness: hide complex SQL syntax so helper function looks simple and readable
@@ -62,6 +83,8 @@ const createTransactionHelpers = (db: Database) => {
         // short-hand property name: key and variable name the same so no need to write posts: posts
         posts,
         reels,
+        tagged_posts,
+        highlights,
     }
 }
 

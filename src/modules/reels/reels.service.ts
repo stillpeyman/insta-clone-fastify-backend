@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify"
+import type { FastifyInstance } from "fastify"
 import { CreateReelDto } from "./reels.types"
 
 const reelsService = (fastify: FastifyInstance) => {

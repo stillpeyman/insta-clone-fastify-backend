@@ -10,7 +10,7 @@ import {
 declare module "fastify" {
     interface FastifyInstance {
         // interface = TS type definition for FastifyInstance obj
-        db: Database.Database // Property "db" has type Database.Database
+        db: Database.Database // Property "db" has type Database.Database (namespace-qualified type)
         transactions: TransactionHelpers // Property "transactions" has type TransactionHelpers
     }
 }
@@ -39,6 +39,25 @@ async function databasePluginHelper(fastify: FastifyInstance) {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `)
+
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS tagged_posts(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      img_url TEXT NOT NULL,
+      caption TEXT,
+      tagged_by TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
+
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS highlights (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      cover_image_url TEXT NOT NULL,
+      title TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
 
     const transactions = createTransactionHelpers(db)
 
